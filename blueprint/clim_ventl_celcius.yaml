@@ -91,7 +91,8 @@ blueprint:
         entity:
           domain: sensor
           device_class: temperature
-      default: ""
+          multiple: true
+      default: []
     outdoor_temp_max_for_vent:
       name: Max Outdoor Temp for Ventilation (Optional)
       description: Maximum outdoor temperature to allow ventilation (to avoid bringing in hot air).
@@ -108,7 +109,8 @@ blueprint:
       selector:
         entity:
           domain: weather
-      default: ""
+          multiple: true
+      default: []
     forecast_temp_heatwave_threshold:
       name: Forecasted Temp Heatwave Threshold (Outdoor)
       description: Daily forecasted temperature (from weather entity) above which a heatwave is considered "announced".
@@ -126,9 +128,9 @@ blueprint:
         entity:
           domain: binary_sensor
           device_class:
-            - opening
-            - window
-            - door
+          - opening
+          - window
+          - door
           multiple: true
       default: []
     turn_off_ac_on_window_open:
@@ -146,9 +148,11 @@ variables:
   portable_ac_1_entity: !input portable_ac_1_entity
   portable_ac_2_entity: !input portable_ac_2_entity
   portable_ac_3_entity: !input portable_ac_3_entity
-  outdoor_temperature_sensor: !input outdoor_temperature_sensor
+  outdoor_temperature_sensor_list: !input outdoor_temperature_sensor
+  outdoor_temperature_sensor: "{{ outdoor_temperature_sensor_list[0] if outdoor_temperature_sensor_list | length > 0 else '' }}"
   threshold_temp_ac_heatwave: !input threshold_temp_ac_heatwave
-  weather_forecast_entity: !input weather_forecast_entity
+  weather_forecast_entity_list: !input weather_forecast_entity
+  weather_forecast_entity: "{{ weather_forecast_entity_list[0] if weather_forecast_entity_list | length > 0 else '' }}"
   forecast_temp_heatwave_threshold: !input forecast_temp_heatwave_threshold
   window_sensor_entities: !input window_sensor_entities
   turn_off_ac_on_window_open: !input turn_off_ac_on_window_open
@@ -160,12 +164,12 @@ trigger:
   - platform: state
     entity_id: !input outdoor_temperature_sensor
     id: outdoor_temp_change
-    enabled: "{{ outdoor_temperature_sensor != '' }}"
+    enabled: "{{ outdoor_temperature_sensor_list | length > 0 }}"
   - platform: state
     entity_id: !input weather_forecast_entity
     attribute: temperature
     id: weather_forecast_change
-    enabled: "{{ weather_forecast_entity != '' }}"
+    enabled: "{{ weather_forecast_entity_list | length > 0 }}"
   - platform: state
     entity_id: !input window_sensor_entities
     id: window_sensors_change
