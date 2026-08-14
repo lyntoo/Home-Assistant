@@ -179,12 +179,9 @@ condition:
   - condition: template
     value_template: >
       {{ states(this.entity_id) not in ['unavailable', 'unknown'] }}
-  - logical_or:
-      - condition: template
-        value_template: "{{ presence_sensor == [] }}"
-      - condition: state
-        entity_id: !input presence_sensor
-        state: "on"
+  - condition: template
+    value_template: >-
+      {{ presence_sensor == [] or is_state(presence_sensor, 'on') }}
 
 action:
   - variables:
