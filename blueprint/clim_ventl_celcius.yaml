@@ -160,6 +160,7 @@ variables:
   forecast_temp_heatwave_threshold: !input forecast_temp_heatwave_threshold
   window_sensor_entities: !input window_sensor_entities
   turn_off_ac_on_window_open: !input turn_off_ac_on_window_open
+  presence_sensor: !input presence_sensor
 
 trigger:
   - platform: state
