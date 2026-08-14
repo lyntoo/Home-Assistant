@@ -129,6 +129,14 @@ blueprint:
       selector:
         boolean:
       default: true
+    presence_sensor:
+      name: Anwesenheitssensor (Optional)
+      description: Wenn ausgewählt, wird die Klimaanlage nur eingeschaltet, wenn Anwesenheit erkannt wird.
+      default: []
+      selector:
+        entity:
+          domain: binary_sensor
+          multiple: false
 
 mode: queued
 
@@ -171,6 +179,12 @@ condition:
   - condition: template
     value_template: >
       {{ states(this.entity_id) not in ['unavailable', 'unknown'] }}
+  - logical_or:
+      - condition: template
+        value_template: "{{ presence_sensor == [] }}"
+      - condition: state
+        entity_id: !input presence_sensor
+        state: "on"
 
 action:
   - variables:
