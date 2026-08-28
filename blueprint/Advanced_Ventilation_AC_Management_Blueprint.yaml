@@ -129,6 +129,14 @@ blueprint:
       selector:
         boolean:
       default: true
+    presence_sensor:
+      name: Anwesenheitssensor (Optional)
+      description: Wenn ausgewählt, wird die Klimaanlage nur eingeschaltet, wenn Anwesenheit erkannt wird.
+      default: []
+      selector:
+        entity:
+          domain: binary_sensor
+          multiple: false
 
 mode: queued
 
@@ -143,6 +151,7 @@ variables:
   forecast_temp_heatwave_threshold: !input forecast_temp_heatwave_threshold
   window_sensor_entity: !input window_sensor_entity
   turn_off_ac_on_window_open: !input turn_off_ac_on_window_open
+  presence_sensor: !input presence_sensor
 
 trigger:
   - platform: state
@@ -171,6 +180,9 @@ condition:
   - condition: template
     value_template: >
       {{ states(this.entity_id) not in ['unavailable', 'unknown'] }}
+  - condition: template
+    value_template: >-
+      {{ presence_sensor == [] or is_state(presence_sensor, 'on') }}
 
 action:
   - variables:
